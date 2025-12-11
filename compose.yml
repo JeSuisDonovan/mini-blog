@@ -1,0 +1,59 @@
+# compose.yml - Configuration Docker pour la formation
+# Utilisable pour tous les projets PHP de la formation
+
+services:
+  # Serveur PHP avec Apache
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mini-blog-php
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - formation-network
+
+  # Base de données MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: mini-blog-mysql
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mini-blog
+      MYSQL_USER: mini-blog
+      MYSQL_PASSWORD: formation
+    ports:
+      - "3321:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - formation-network
+
+  # phpMyAdmin pour gérer la base
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: mini-blog-phpmyadmin
+    restart: "no"
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - mysql
+    networks:
+      - formation-network
+
+networks:
+  formation-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
