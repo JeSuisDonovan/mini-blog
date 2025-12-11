@@ -27,7 +27,7 @@
     <label class="fl dc">Stock only ?<input type="checkbox" name="withnostock" id="stockfilter"></label>
     <input type="submit" value="filtrer">
 </form>
-<table>
+<table> 
     <thead>
         <tr>
             <th>Nom</th>
